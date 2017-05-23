@@ -1,36 +1,29 @@
 package xyz.thecodeside.homebudgetplanner
 
+import android.Manifest.permission.READ_CONTACTS
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
-import android.content.pm.PackageManager
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.app.LoaderManager.LoaderCallbacks
-
 import android.content.CursorLoader
 import android.content.Loader
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.AsyncTask
-
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.support.design.widget.Snackbar
+import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
-import android.view.KeyEvent
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.inputmethod.EditorInfo
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
+import kotlinx.android.synthetic.main.activity_login.*
 
-import java.util.ArrayList
-
-import android.Manifest.permission.READ_CONTACTS
+import java.util.*
 
 /**
  * A login screen that offers login via email/password.
@@ -42,20 +35,15 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     private var mAuthTask: UserLoginTask? = null
 
     // UI references.
-    private var mEmailView: AutoCompleteTextView? = null
-    private var mPasswordView: EditText? = null
-    private var mProgressView: View? = null
-    private var mLoginFormView: View? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         // Set up the login form.
-        mEmailView = findViewById(R.id.email) as AutoCompleteTextView
         populateAutoComplete()
 
-        mPasswordView = findViewById(R.id.password) as EditText
-        mPasswordView!!.setOnEditorActionListener(TextView.OnEditorActionListener { textView, id, keyEvent ->
+        passwordEt!!.setOnEditorActionListener(TextView.OnEditorActionListener { textView, id, keyEvent ->
             if (id == R.id.login || id == EditorInfo.IME_NULL) {
                 attemptLogin()
                 return@OnEditorActionListener true
@@ -65,9 +53,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
 
         val mEmailSignInButton = findViewById(R.id.email_sign_in_button) as Button
         mEmailSignInButton.setOnClickListener { attemptLogin() }
-
-        mLoginFormView = findViewById(R.id.login_form)
-        mProgressView = findViewById(R.id.login_progress)
+        
     }
 
     private fun populateAutoComplete() {
@@ -86,7 +72,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             return true
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(emailEt, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, OnClickListener { requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS) })
         } else {
             requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS)
@@ -117,32 +103,30 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             return
         }
 
-        // Reset errors.
-        mEmailView!!.error = null
-        mPasswordView!!.error = null
+
 
         // Store values at the time of the login attempt.
-        val email = mEmailView!!.text.toString()
-        val password = mPasswordView!!.text.toString()
+        val email = emailEt!!.text.toString()
+        val password = passwordEt!!.text.toString()
 
         var cancel = false
         var focusView: View? = null
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView!!.error = getString(R.string.error_invalid_password)
-            focusView = mPasswordView
+            passwordEt.error = getString(R.string.error_invalid_password)
+            focusView = passwordEt
             cancel = true
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView!!.error = getString(R.string.error_field_required)
-            focusView = mEmailView
+            emailEt!!.error = getString(R.string.error_field_required)
+            focusView = emailEt
             cancel = true
         } else if (!isEmailValid(email)) {
-            mEmailView!!.error = getString(R.string.error_invalid_email)
-            focusView = mEmailView
+            emailEt!!.error = getString(R.string.error_invalid_email)
+            focusView = emailEt
             cancel = true
         }
 
@@ -180,30 +164,30 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime)
 
-            mLoginFormView!!.visibility = if (show) View.GONE else View.VISIBLE
-            mLoginFormView!!.animate().setDuration(shortAnimTime.toLong()).alpha(
+            login_form!!.visibility = if (show) View.GONE else View.VISIBLE
+            login_form!!.animate().setDuration(shortAnimTime.toLong()).alpha(
                     (if (show) 0 else 1).toFloat()).setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    mLoginFormView!!.visibility = if (show) View.GONE else View.VISIBLE
+                    login_form!!.visibility = if (show) View.GONE else View.VISIBLE
                 }
             })
 
-            mProgressView!!.visibility = if (show) View.VISIBLE else View.GONE
-            mProgressView!!.animate().setDuration(shortAnimTime.toLong()).alpha(
+            login_progress!!.visibility = if (show) View.VISIBLE else View.GONE
+            login_progress!!.animate().setDuration(shortAnimTime.toLong()).alpha(
                     (if (show) 1 else 0).toFloat()).setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    mProgressView!!.visibility = if (show) View.VISIBLE else View.GONE
+                    login_progress!!.visibility = if (show) View.VISIBLE else View.GONE
                 }
             })
         } else {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
-            mProgressView!!.visibility = if (show) View.VISIBLE else View.GONE
-            mLoginFormView!!.visibility = if (show) View.GONE else View.VISIBLE
+            login_progress!!.visibility = if (show) View.VISIBLE else View.GONE
+            login_form!!.visibility = if (show) View.GONE else View.VISIBLE
         }
     }
 
-    override fun onCreateLoader(i: Int, bundle: Bundle): Loader<Cursor> {
+    override fun onCreateLoader(i: Int, bundle: Bundle?): Loader<Cursor> {
         return CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
@@ -238,7 +222,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         val adapter = ArrayAdapter(this@LoginActivity,
                 android.R.layout.simple_dropdown_item_1line, emailAddressCollection)
 
-        mEmailView!!.setAdapter(adapter)
+        emailEt!!.setAdapter(adapter)
     }
 
 
@@ -286,8 +270,8 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             if (success!!) {
                 finish()
             } else {
-                mPasswordView!!.error = getString(R.string.error_incorrect_password)
-                mPasswordView!!.requestFocus()
+                passwordEt!!.error = getString(R.string.error_incorrect_password)
+                passwordEt!!.requestFocus()
             }
         }
 
