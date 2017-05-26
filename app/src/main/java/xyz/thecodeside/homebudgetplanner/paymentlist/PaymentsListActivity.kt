@@ -1,41 +1,38 @@
-package xyz.thecodeside.homebudgetplanner
+package xyz.thecodeside.homebudgetplanner.paymentlist
 
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import android.widget.Toast
+import com.hannesdorfmann.mosby3.mvp.MvpActivity
 import kotlinx.android.synthetic.main.activity_payments_list.*
+import kotlinx.android.synthetic.main.app_bar_payments_list.*
+import xyz.thecodeside.homebudgetplanner.R
 
-class PaymentsListActivity : AppCompatActivity(),
+class PaymentsListActivity :
+        MvpActivity<PaymentsListView, PaymentsListPresenter>(),
+        PaymentsListView,
         NavigationView.OnNavigationItemSelectedListener {
+
+    override fun createPresenter(): PaymentsListPresenter = PaymentsListPresenter()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payments_list)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        fab.setOnClickListener { Toast.makeText(applicationContext, "Click", Toast.LENGTH_SHORT).show() }
 
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        //loadingView.setOnClickListener { Toast.makeText(applicationContext,"Click", Toast.LENGTH_SHORT).show() }
         val toggle = ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawer.addDrawerListener(toggle)
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        val navigationView = findViewById(R.id.nav_view) as NavigationView
-        navigationView.setNavigationItemSelectedListener(this)
+        nav_view.setNavigationItemSelectedListener(this)
     }
 
     override fun onBackPressed() {
@@ -65,8 +62,9 @@ class PaymentsListActivity : AppCompatActivity(),
 
         }
 
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
-        drawer.closeDrawer(GravityCompat.START)
+
+        drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 }
+

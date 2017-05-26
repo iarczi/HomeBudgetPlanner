@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 
 android {
@@ -36,16 +37,21 @@ dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
-    compile 'com.jakewharton:butterknife:8.6.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+    compile 'com.hannesdorfmann.mosby3:mvp-lce:3.0.4'
 
-    compile 'com.hannesdorfmann.mosby3:viewstate:3.0.4'
+    //dependency injection
+    compile 'com.google.dagger:dagger:2.11'
+    kapt 'com.google.dagger:dagger-compiler:2.11'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+    /* compile 'com.google.dagger:dagger-android:2.11'
+     compile 'com.google.dagger:dagger-android-support:2.11' // if you use the support libraries
+     annotationProcessor 'com.google.dagger:dagger-android-processor:2.11'
+     provided 'javax.annotation:jsr250-api:1.0'*/
 
-    compile 'com.google.dagger:dagger:2.11-rc2'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.11-rc2'
-    compile 'com.google.dagger:dagger-android:2.11-rc2'
-    compile 'com.google.dagger:dagger-android-support:2.11-rc2' // if you use the support libraries
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.11-rc2'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+    compile 'io.reactivex.rxjava2:rxkotlin:2.0.3'
+    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -61,3 +67,9 @@ gradle.projectsEvaluated {
         options.compilerArgs << "-Xmaxerrs" << "500" // or whatever number you want
     }
 }
+
+
+kapt {
+    generateStubs = true
+}
+
