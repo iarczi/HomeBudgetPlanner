@@ -8,13 +8,15 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.hannesdorfmann.mosby3.mvp.MvpActivity
 import kotlinx.android.synthetic.main.activity_payments_list.*
-import kotlinx.android.synthetic.main.app_bar_payments_list.*
+import kotlinx.android.synthetic.main.toolbar_layour.*
+import org.jetbrains.anko.sdk25.coroutines.onClick
 import xyz.thecodeside.homebudgetplanner.R
 
 class PaymentsListActivity :
         MvpActivity<PaymentsListView, PaymentsListPresenter>(),
         PaymentsListView,
         NavigationView.OnNavigationItemSelectedListener {
+
 
     override fun createPresenter(): PaymentsListPresenter = PaymentsListPresenter()
 
@@ -24,11 +26,13 @@ class PaymentsListActivity :
         setContentView(R.layout.activity_payments_list)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { Toast.makeText(applicationContext, "Click", Toast.LENGTH_SHORT).show() }
+        fab.onClick {
+            Toast.makeText(applicationContext, "Click", Toast.LENGTH_SHORT).show()
+        }
 
-        //loadingView.setOnClickListener { Toast.makeText(applicationContext,"Click", Toast.LENGTH_SHORT).show() }
         val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+                this, drawer_layout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
